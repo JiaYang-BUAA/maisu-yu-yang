@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8f5ed">
+  <meta name="description" content="在线阅读《麦穗与羊》全本六格漫画与羊馍干的原帖《死在十七岁的你》。">
+  <meta property="og:title" content="麦穗与羊 · 图文读本">
+  <meta property="og:description" content="从一张化学卷，到两个人的放学路。读完整漫画，也读杨沫写下的故事。">
+  <meta property="og:image" content="https://jiayang-buaa.github.io/maisu-yu-yang/media/hero.webp">
+  <title>麦穗与羊 · 图文读本</title>
+  <link rel="icon" href="./media/wheat.webp" type="image/webp">
+  <link rel="stylesheet" href="./reader.css">
+  <script defer src="./reader.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="mast">
+    <div class="wrap mast-inner">
+      <a class="brand" href="#home" aria-label="麦穗与羊首页"><img src="./media/wheat.webp" alt=""><span>麦穗与羊</span></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="#home" data-nav="home" aria-current="page">首页</a>
+        <a href="#comic/1" data-nav="comic" data-resume="comic">漫画</a>
+        <a href="#text/1" data-nav="text" data-resume="text">原文</a>
+      </nav>
+      <button class="toc-trigger" type="button" aria-label="阅读目录" data-open-toc><i class="list-icon" aria-hidden="true"></i><span>阅读目录</span></button>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <div id="home">
+      <section class="hero wrap" aria-labelledby="book-title">
+        <div class="hero-copy">
+          <p class="byline"><span></span>羊馍干 原作</p>
+          <h1 id="book-title">麦穗与羊</h1>
+          <p class="intro">初三那年，宋穗把化学卷悄悄推过了桌缝。<br class="wide">后来，原本一个人走的放学路，多了一个人。</p>
+          <div class="actions">
+            <a class="primary" href="#comic/1" data-resume="comic"><i class="book-icon" aria-hidden="true"></i><span data-comic-label>开始读漫画</span><span aria-hidden="true">→</span></a>
+            <a class="secondary" href="#text/1" data-resume="text"><span data-text-label>阅读原文</span><span aria-hidden="true">→</span></a>
+          </div>
+          <p class="hero-facts">21 页漫画<span></span>原帖《死在十七岁的你》</p>
+        </div>
+        <figure class="hero-art">
+          <div class="hero-image"><img src="./media/hero.webp" width="768" height="512" alt="放学时，杨沫和宋穗背着书包并排走在树下。" fetchpriority="high"></div>
+          <figcaption><span class="quote-rule"></span>“以后，你就跟我并排走就好了。”</figcaption>
+        </figure>
+      </section>
+      <section class="shelf wrap" aria-labelledby="shelf-title">
+        <div class="section-head"><h2 id="shelf-title">漫画选页</h2><button class="text-link" data-open-toc="comic">全部 21 页 <span aria-hidden="true">↗</span></button></div>
+        <div class="cards" id="cards"></div>
+      </section>
+      <section class="original-note wrap" aria-labelledby="original-title">
+        <img src="./media/cover.webp" class="cover" width="971" height="1619" loading="lazy" alt="《麦穗与羊》麦穗线稿封面">
+        <div><p class="byline"><span></span>原帖连读</p><h2 id="original-title">死在十七岁的你</h2>
+        <blockquote>“各位8u晚上好，记录一下我在十七岁就去世的女友吧。”</blockquote>
+        <a class="text-link" href="#text/1" data-resume="text">读羊馍干的原文 <span aria-hidden="true">→</span></a></div>
+      </section>
+    </div>
+    <section id="reader" class="wrap reader" hidden aria-label="阅读器"></section>
+    <noscript><p class="wrap">漫画与文字阅读器需要启用 JavaScript。也可以直接打开<a href="./facsimile/index.html">原帖图文连读版</a>。</p></noscript>
+  </main>
+  <footer class="foot"><div class="wrap"><span>麦穗与羊</span><span>原作　羊馍干《死在十七岁的你》</span><a href="./facsimile/index.html">原帖图文对照 ↗</a></div></footer>
+  <dialog id="toc" class="toc" aria-labelledby="toc-title">
+    <div class="dialog-heading"><h2 id="toc-title">阅读目录</h2><button class="cross" data-close="toc" aria-label="关闭目录">×</button></div>
+    <div class="tabs" aria-label="目录类型"><button data-tab="comic">漫画</button><button data-tab="text">原文</button></div>
+    <div class="toc-entries" id="toc-entries"></div>
+  </dialog>
+  <dialog id="zoom" class="zoom" aria-label="漫画原图">
+    <div class="zoom-tools"><button id="scale" type="button">放大</button><button data-close="zoom" type="button">关闭 ×</button></div>
+    <div class="zoom-scroll"><img id="zoom-page" alt=""></div>
+  </dialog>
+</body>
+</html>
