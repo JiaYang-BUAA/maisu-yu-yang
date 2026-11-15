@@ -62,11 +62,13 @@ function textPage(n) {
   const ch=original.chapters[n-1];
   const paras=ch.paragraphs.map((p,i)=>{
     let html='<p id="para-'+(i+1)+'">'+escapeHTML(p)+'</p>';
-    if (ch.illustration && i+1===ch.illustrationAfter) html+='<figure><img src="'+escapeHTML(ch.illustration)+'" width="768" height="512" alt="'+escapeHTML(ch.alt||"本节插图")+'" loading="lazy"></figure>';
+    for (const art of ch.illustrations || []) {
+      if (art.after === i + 1) html += '<figure><img src="'+escapeHTML(art.src)+'" width="768" height="512" alt="'+escapeHTML(art.alt)+'" loading="lazy"></figure>';
+    }
     return html;
   }).join("");
   return '<div class="text-shell"><div class="read-head"><div class="crumbs"><a href="#home">首页</a><span>/</span><button data-open-toc="text">原文目录</button><span>/</span><b>'+pad(n)+' '+escapeHTML(ch.title)+'</b></div><div class="text-options"><a class="read-source" href="./facsimile/index.html">截图对照 ↗</a><button class="rd-button" data-size="-2" aria-label="缩小字号">A−</button><button class="rd-button" data-size="2" aria-label="增大字号">A＋</button></div></div>'+
-    '<article class="prose"><div class="section-mark">《死在十七岁的你》　/　第 '+pad(n)+' 节</div><h1>'+escapeHTML(ch.title)+'</h1>'+paras+'</article>'+bottom("text",n,original.chapters.length)+'<p class="rd-info">原作　羊馍干　·　按原帖顺序分节连读</p></div>';
+    '<article class="prose">'+(n===1?'<figure><img src="media/story/cover.webp" width="971" height="1619" alt="麦穗与羊，两枝麦穗封面"></figure>':'')+'<div class="section-mark">《死在十七岁的你》　/　第 '+pad(n)+' 节</div><h1>'+escapeHTML(ch.title)+'</h1>'+paras+'</article>'+bottom("text",n,original.chapters.length)+'<p class="rd-info">原作　羊馍干　·　按原帖顺序分节连读</p></div>';
 }
 function syncSize() {
   const fontSize=sizeSetting();
@@ -174,7 +176,7 @@ if("scrollRestoration" in history)history.scrollRestoration="manual";
 async function getJSON(url){const r=await fetch(url);if(!r.ok)throw Error(r.status);return r.json();}
 async function start(){
   try{
-    [comic,original]=await Promise.all([getJSON("data/comic.json"),getJSON("data/original.json")]);
+    [comic,original]=await Promise.all([getJSON("data/comic.json"),getJSON("data/original.json?v=3")]);
     ready=true;homeCards();route();
   }catch{
     $("#cards").innerHTML='<p class="load-error">读本暂时未加载。<button type="button" id="retry">重新加载</button>　<a href="./facsimile/index.html">打开图文对照版 ↗</a></p>';
