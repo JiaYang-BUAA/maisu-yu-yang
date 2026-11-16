@@ -52,11 +52,27 @@ function stepControl(kind, n, delta, long=false) {
 function bottom(kind,n,total) {
   return '<div class="read-bottom">'+stepControl(kind,n,-1,true)+'<button class="meter" data-open-toc="'+kind+'" aria-label="打开目录">'+pad(n)+' / '+pad(total)+'<span>目录</span></button>'+stepControl(kind,n,1,true)+'</div>';
 }
+function readingImage(page) {
+  return page.image.replace("media/p", "media/read-p");
+}
+function preloadNextPage() {
+  const image = $(".comic-sheet img");
+  const next = comic[current];
+  if (!image || !next || navigator.connection?.saveData) return;
+  const preload = () => {
+    if (!image.isConnected) return;
+    const nextImage = new Image();
+    nextImage.fetchPriority = "low";
+    nextImage.src = readingImage(next);
+  };
+  if (image.complete && image.naturalWidth) preload();
+  else image.addEventListener("load", preload, {once:true});
+}
 function comicPage(n) {
   const p=comic[n-1];
   const name=escapeHTML(p.title);
   return '<div class="reader-shell"><div class="read-head"><div class="crumbs"><a href="#home">首页</a><span>/</span><button data-open-toc="comic">漫画</button><span>/</span><b>'+pad(n)+' '+name+'</b></div><div class="tools">'+stepControl("comic",n,-1)+stepControl("comic",n,1)+'<button class="rd-button" data-zoom>放大</button></div></div>'+
-    '<button class="comic-sheet" data-zoom aria-label="放大第 '+n+' 页漫画"><img src="'+p.image+'" width="1760" height="2430" alt="《麦穗与羊》第 '+n+' 页《'+name+'》，六格漫画。" fetchpriority="high"></button>'+bottom("comic",n,comic.length)+'</div>';
+    '<button class="comic-sheet" data-zoom aria-label="放大第 '+n+' 页漫画"><img src="'+readingImage(p)+'" width="1760" height="2430" alt="《麦穗与羊》第 '+n+' 页《'+name+'》，六格漫画。" fetchpriority="high"></button>'+bottom("comic",n,comic.length)+'</div>';
 }
 function textSection(n) {
   const ch=original.chapters[n-1];
@@ -108,6 +124,7 @@ function route() {
   let title="麦穗与羊 · 图文读本";
   if(mode==="comic"){
     $("#reader").innerHTML=comicPage(n);
+    preloadNextPage();
     title=comic[n-1].title+" · 漫画 · 麦穗与羊";
   }else if(mode==="text"){
     if(!wasText) $("#reader").innerHTML=textPage();
