@@ -27,7 +27,7 @@ function resumeLinks() {
   for (const link of $$("[data-resume]")) {
     const kind=link.dataset.resume;
     const saved=safeNumber(read(kind,1),kind==="comic"?comic.length:original.chapters.length);
-    link.href="#"+kind+"/"+saved;
+    link.href=kind==="text"?"#text/resume":"#"+kind+"/"+saved;
   }
   if ($("[data-comic-label]")) $("[data-comic-label]").textContent=read("comic",0)?"继续读漫画":"开始读漫画";
   if ($("[data-text-label]")) $("[data-text-label]").textContent=read("text",0)?"继续读原文":"阅读原文";
@@ -58,17 +58,19 @@ function comicPage(n) {
   return '<div class="reader-shell"><div class="read-head"><div class="crumbs"><a href="#home">首页</a><span>/</span><button data-open-toc="comic">漫画</button><span>/</span><b>'+pad(n)+' '+name+'</b></div><div class="tools">'+stepControl("comic",n,-1)+stepControl("comic",n,1)+'<button class="rd-button" data-zoom>放大</button></div></div>'+
     '<button class="comic-sheet" data-zoom aria-label="放大第 '+n+' 页漫画"><img src="'+p.image+'" width="1760" height="2430" alt="《麦穗与羊》第 '+n+' 页《'+name+'》，六格漫画。" fetchpriority="high"></button>'+bottom("comic",n,comic.length)+'</div>';
 }
-function textPage(n) {
+function textSection(n) {
   const ch=original.chapters[n-1];
   const paras=ch.paragraphs.map((p,i)=>{
-    let html='<p id="para-'+(i+1)+'">'+escapeHTML(p)+'</p>';
+    let html='<p id="para-'+(n+"-"+(i+1))+'">'+escapeHTML(p)+'</p>';
     for (const art of ch.illustrations || []) {
       if (art.after === i + 1) html += '<figure><img src="'+escapeHTML(art.src)+'" width="768" height="512" alt="'+escapeHTML(art.alt)+'" loading="lazy"></figure>';
     }
     return html;
   }).join("");
-  return '<div class="text-shell"><div class="read-head"><div class="crumbs"><a href="#home">首页</a><span>/</span><button data-open-toc="text">原文目录</button><span>/</span><b>'+pad(n)+' '+escapeHTML(ch.title)+'</b></div><div class="text-options"><a class="read-source" href="./facsimile/index.html">截图对照 ↗</a><button class="rd-button" data-size="-2" aria-label="缩小字号">A−</button><button class="rd-button" data-size="2" aria-label="增大字号">A＋</button></div></div>'+
-    '<article class="prose">'+(n===1?'<figure><img src="media/story/cover.webp" width="971" height="1619" alt="麦穗与羊，两枝麦穗封面"></figure>':'')+'<div class="section-mark">《死在十七岁的你》　/　第 '+pad(n)+' 节</div><h1>'+escapeHTML(ch.title)+'</h1>'+paras+'</article>'+bottom("text",n,original.chapters.length)+'<p class="rd-info">原作　羊馍干　·　按原帖顺序分节连读</p></div>';
+  return '<section class="text-section" id="text-section-'+n+'"><div class="section-mark">第 '+pad(n)+' 节</div><h2>'+escapeHTML(ch.title)+'</h2>'+paras+'</section>';
+}
+function textPage() {
+  return '<div class="text-shell"><div class="read-head"><div class="crumbs"><a href="#home">首页</a><span>/</span><button data-open-toc="text">原文目录</button></div><div class="text-options"><a class="read-source" href="./facsimile/index.html">截图对照 ↗</a><button class="rd-button" data-size="-2" aria-label="缩小字号">A−</button><button class="rd-button" data-size="2" aria-label="增大字号">A＋</button></div></div><article class="prose"><figure><img src="media/story/cover.webp" width="971" height="1619" alt="麦穗与羊，两枝麦穗封面"></figure><h1>死在十七岁的你</h1><p class="rd-info">原作　羊馍干</p>'+original.chapters.map((_,i)=>textSection(i+1)).join('')+'</article><div class="read-bottom"><button class="rd-button" data-open-toc="text">阅读目录</button><a class="rd-button" href="#home">回到首页 →</a></div></div>';
 }
 function syncSize() {
   const fontSize=sizeSetting();
@@ -80,7 +82,7 @@ function syncSize() {
 function closeDialogs() {
   for(const dlg of $$("dialog[open]")) dlg.close();
 }
-function positionKey(){return "position-"+mode+"-"+current;}
+function positionKey(){return mode==="text"?"position-text-continuous":"position-"+mode+"-"+current;}
 function remember() {
   if (mode!=="home" && !restoring) write(positionKey(),Math.round(window.scrollY));
 }
@@ -92,6 +94,7 @@ function route() {
   const nextMode=["comic","text"].includes(parts[0])?parts[0]:"home";
   const n=nextMode==="home"?1:safeNumber(parseInt(parts[1],10),nextMode==="comic"?comic.length:original.chapters.length);
   if(nextMode!==mode || n!==current) remember();
+  const wasText=mode==="text";
   mode=nextMode;
   current=n;
   const activeGeneration=++generation;
@@ -107,8 +110,8 @@ function route() {
     $("#reader").innerHTML=comicPage(n);
     title=comic[n-1].title+" · 漫画 · 麦穗与羊";
   }else if(mode==="text"){
-    $("#reader").innerHTML=textPage(n);
-    title=original.chapters[n-1].title+" · 原文 · 麦穗与羊";
+    if(!wasText) $("#reader").innerHTML=textPage();
+    title="完整原文 · 麦穗与羊";
     syncSize();
   }else $("#reader").replaceChildren();
   if(mode!=="home") write(mode,n);
@@ -118,7 +121,10 @@ function route() {
   document.querySelector("#main").focus({preventScroll:true});
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     if(generation!==activeGeneration) return;
-    window.scrollTo(0,y);
+    if(mode==="text" && parts[1]!=="resume"){
+      if(n===1) window.scrollTo(0,0);
+      else $("#text-section-"+n).scrollIntoView();
+    }else window.scrollTo(0,y);
     restoring=false;
   }));
 }
@@ -158,7 +164,10 @@ document.addEventListener("click",e=>{
   else if(target.matches("[data-zoom]")) zoom();
   else if(target.matches("#scale")) $("#scale").textContent=$(".zoom-scroll").classList.toggle("enlarged")?"适合屏幕":"放大";
   else if(target.matches("[data-size]")){write("size",Math.min(28,Math.max(16,sizeSetting()+Number(target.dataset.size))));syncSize();}
-  else if(target.matches(".toc-entry")) closeDialogs();
+  else if(target.matches(".toc-entry")){
+    closeDialogs();
+    if(mode==="text" && target.hash===location.hash) $("#text-section-"+current).scrollIntoView();
+  }
   else if(target.matches("dialog") && e.target===target){
     const r=target.getBoundingClientRect();
     if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)target.close();
