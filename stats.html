@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>访问统计 · 麦穗与羊</title><link rel="stylesheet" href="reader.css?v=4">
+<style>
+.stats{max-width:900px;margin:0 auto;padding:32px 22px 60px}.stats h1{font-family:var(--serif);font-size:36px;margin:30px 0 18px}.stats h2{font-size:20px;margin:32px 0 14px}.stats p{line-height:1.8;color:var(--quiet)}.stats table{border-collapse:collapse;width:100%;margin:14px 0 24px}.stats th,.stats td{padding:13px 10px;text-align:right;border-bottom:1px solid var(--fine)}.stats th:first-child,.stats td:first-child{text-align:left}.stats .summary{display:grid;grid-template-columns:1fr 1fr;gap:15px}.stat{padding:24px;border:1px solid var(--fine)}.stat strong{display:block;font-size:36px;margin-top:10px}.settings{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.stats button{border:1px solid var(--fine);padding:9px 14px}.stats a{text-decoration:underline}.stats details{margin-top:26px}.stats summary{cursor:pointer}
+</style><script defer src="analytics.js?v=1"></script><script defer src="stats.js?v=1"></script></head>
+<body data-stats="dashboard"><main class="stats">
+<a href="./">← 返回读本</a><h1>访问统计</h1>
+<p>从 2026 年 11 月 17 日开始记录。日期按北京时间计算。</p>
+<div class="summary"><div class="stat">累计浏览量<strong id="pv">—</strong></div><div class="stat">累计访客数（估算）<strong id="uv">—</strong></div></div>
+<h2>最近 7 天</h2><table><thead><tr><th>日期</th><th>浏览量</th><th>访客数</th></tr></thead><tbody id="days"></tbody></table>
+<h2>阅读情况</h2><table><thead><tr><th>内容</th><th>进入次数</th><th>访客数</th></tr></thead><tbody id="reading"></tbody></table>
+<div class="settings"><button id="refresh">刷新数据</button><label><input type="checkbox" id="exclude"> 此浏览器不计入统计</label></div><p id="status" role="status">正在读取统计…</p>
+<details><summary>统计口径与隐私</summary>
+<p>浏览量按读本页面的打开或刷新次数计算。在同一次打开中，漫画、原文和截图对照各记录一次进入，漫画翻页不重复计入进入次数。打开本统计页不会增加计数。</p>
+<p>访客数由不蒜子服务去重估算，无法等同于实际人数。共享网络、拦截工具和网络失败会影响结果。不同内容的访客数存在重叠，不能直接相加。</p>
+<p>本页公开显示汇总数字。请求发送给不蒜子公共服务，服务会接收访问 IP 和浏览器请求信息，页面只提交本读本的统计分类，不发送阅读正文或网址查询参数。公共服务不提供数据长期保留或可用性保证。<a href="https://busuanzi.apifox.cn/">查看服务说明</a>。</p>
+</details></main></body></html>
